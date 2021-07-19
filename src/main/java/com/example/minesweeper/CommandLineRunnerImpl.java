@@ -34,13 +34,6 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         generateBombs(minesList, minesCount, matrixSize,firstPosition);
         checkPosition(matrix, positions, minesList);
 
-        //for testing
-//        for (String mine:minesList) {
-//            int row = Integer.parseInt(mine.split("\\s+")[0]);
-//            int col = Integer.parseInt(mine.split("\\s+")[1]);
-//            matrix[row][col] = "*";
-//        }
-
         int countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
         while (countOfCellsToBeChecked != 0){
             countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
@@ -76,7 +69,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             for (int col = 0; col < matrix.length; col++) {
                 if(matrix[row][col].equals("-")){
                     count++;
-                };
+                }
             }
         }
         return count == minesCount;
@@ -92,7 +85,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
                     positions[1] = String.valueOf(col);
                     adjacentSafeCells(positions, minesList, matrix);
                     count++;
-                };
+                }
             }
         }
         return count;
@@ -143,9 +136,9 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
                     }
                     for (int j = startingCol; j < startingCol+3; j++) {
                         if(j < 0 || j >= matrix.length){
-                            continue;
+                            break;
                         }else if(i == row && j==col){
-                            continue;
+                            break;
                         }else if(matrix[i][j].equals("-")){
                             matrix[i][j] = "C";
                         }
@@ -156,7 +149,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         }
 
 
-    private Set<String> generateBombs(Set<String> minesList, int minesCount, int matrixSize, String firstPosition) {
+    private void generateBombs(Set<String> minesList, int minesCount, int matrixSize, String firstPosition) {
         Random rand = new Random();
         for (int i = 0; i < minesCount; i++) {
             int row = rand.nextInt(matrixSize);
@@ -168,7 +161,6 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
                 minesList.add(bomb);
             }
         }
-        return minesList;
     }
 
     private void printMatrix(String[][] matrix, int size) {
