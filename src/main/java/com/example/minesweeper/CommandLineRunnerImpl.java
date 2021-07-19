@@ -20,29 +20,32 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Enter the Difficulty Level");
+        System.out.print("Enter the Difficulty Level:");
         int level = Integer.parseInt(bufferedReader.readLine());
-        int matrixSize = setSize(level);
+
+        int matrixSize = setMatrixSize(level);
         int minesCount = setCount(level);
         Set<String> minesList = new HashSet<>();
         String[][] matrix = new String[matrixSize][matrixSize];
         generateMatrix(matrix, matrixSize);
         printMatrix(matrix, matrixSize);
-        System.out.println("Enter your move");
+
+        System.out.print("Enter your move:");
         String[] positions = bufferedReader.readLine().split("\\s+");
+
         String firstPosition = positions[0]+" "+positions[1];
         generateBombs(minesList, minesCount, matrixSize,firstPosition);
         checkPosition(matrix, positions, minesList);
-
         int countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
         while (countOfCellsToBeChecked != 0){
             countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
+            printMatrix(matrix, matrixSize);
         }
         printMatrix(matrix, matrixSize);
 
         boolean youWin = false;
         while (!youWin) {
-            System.out.println("Enter your move");
+            System.out.print("Enter your move:");
             positions = bufferedReader.readLine().split("\\s+");
             checkPosition(matrix, positions, minesList);
             if (minesList.contains(positions[0] + " " + positions[1])){
@@ -62,7 +65,6 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             }
         }
     }
-
     private boolean checkForWin(String[][] matrix, int minesCount) {
         int count = 0;
         for (int row = 0; row < matrix.length; row++) {
@@ -136,10 +138,9 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
                     }
                     for (int j = startingCol; j < startingCol+3; j++) {
                         if(j < 0 || j >= matrix.length){
-                            break;
-                        }else if(i == row && j==col){
-                            break;
-                        }else if(matrix[i][j].equals("-")){
+                            continue;
+                        }
+                        if(matrix[i][j].equals("-")){
                             matrix[i][j] = "C";
                         }
                     }
@@ -200,7 +201,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         }
     }
 
-    private int setSize(int level) {
+    public static int setMatrixSize(int level)  {
         switch (level){
             case 0:
                 return 9;
@@ -212,7 +213,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         return 0;
     }
 
-    private int setCount(int level) {
+    public static int setCount(int level) {
         switch (level){
             case 0:
                 return 10;
