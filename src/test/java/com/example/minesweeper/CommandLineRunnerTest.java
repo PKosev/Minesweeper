@@ -10,7 +10,7 @@ public class CommandLineRunnerTest {
     public void setSizeTest(){
 
 
-        Assert.assertEquals("Wrong Matrix Size",9, CommandLineRunnerImpl.setMatrixSize(0));
+        Assert.assertEquals("Wrong Matrix Size",8, CommandLineRunnerImpl.setMatrixSize(0));
 
     }
 

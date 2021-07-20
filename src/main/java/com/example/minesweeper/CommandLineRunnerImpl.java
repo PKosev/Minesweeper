@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Random;
@@ -25,46 +26,60 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
         int matrixSize = setMatrixSize(level);
         int minesCount = setCount(level);
+        boolean youWin = false;
         Set<String> minesList = new HashSet<>();
         String[][] matrix = new String[matrixSize][matrixSize];
+
         generateMatrix(matrix, matrixSize);
         printMatrix(matrix, matrixSize);
 
-        System.out.print("Enter your move:");
-        String[] positions = bufferedReader.readLine().split("\\s+");
+        String[] positions = cordValidation(matrixSize);
+        generateBombs(minesList, minesCount, matrixSize,positions);
 
-        String firstPosition = positions[0]+" "+positions[1];
-        generateBombs(minesList, minesCount, matrixSize,firstPosition);
-        checkPosition(matrix, positions, minesList);
-        int countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
-        while (countOfCellsToBeChecked != 0){
-            countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
-            printMatrix(matrix, matrixSize);
-        }
-        printMatrix(matrix, matrixSize);
-
-        boolean youWin = false;
         while (!youWin) {
-            System.out.print("Enter your move:");
-            positions = bufferedReader.readLine().split("\\s+");
             checkPosition(matrix, positions, minesList);
             if (minesList.contains(positions[0] + " " + positions[1])){
                 printMatrix(matrix, matrixSize);
                 System.out.println();
-                System.out.println("You lost!");
+                System.out.print("You lost!");
                 return;
             }
-            countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
+
+            int countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
             while (countOfCellsToBeChecked != 0){
                 countOfCellsToBeChecked = checkForCells(matrix, positions, minesList);
             }
+
             youWin = checkForWin(matrix, minesCount);
             printMatrix(matrix, matrixSize);
             if (youWin){
                 System.out.println("Congratulation you won!");
+                continue;
             }
+            positions = cordValidation(matrixSize);
         }
     }
+
+    private String[] cordValidation(int matrixSize) throws IOException {
+            System.out.print("Enter your move:");
+            String [] positions = bufferedReader.readLine().split("\\s+");
+            try {
+                if(positions.length==2 &&
+                        Integer.parseInt(positions[0])< matrixSize && Integer.parseInt(positions[0]) > -1 &&
+                        Integer.parseInt(positions[1])< matrixSize && Integer.parseInt(positions[1]) > -1
+                ){
+                    return positions;
+                }else {
+                    System.out.print("Wrong input format or values!!" + System.lineSeparator());
+                    return cordValidation(matrixSize);
+                }
+            }catch (Exception e){
+                System.out.print("Wrong input format or values!!" + System.lineSeparator());
+                return cordValidation(matrixSize);
+            }
+    }
+
+
     private boolean checkForWin(String[][] matrix, int minesCount) {
         int count = 0;
         for (int row = 0; row < matrix.length; row++) {
@@ -150,7 +165,8 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         }
 
 
-    private void generateBombs(Set<String> minesList, int minesCount, int matrixSize, String firstPosition) {
+    private void generateBombs(Set<String> minesList, int minesCount, int matrixSize, String[] positions) {
+        String firstPosition = positions[0]+" "+positions[1];
         Random rand = new Random();
         for (int i = 0; i < minesCount; i++) {
             int row = rand.nextInt(matrixSize);
