@@ -79,7 +79,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             }
     }
 
-
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     private boolean checkForWin(String[][] matrix, int minesCount) {
         int count = 0;
         for (int row = 0; row < matrix.length; row++) {
